@@ -88,37 +88,27 @@ public class Image {
 	
 	
 	/**
-     * Sauvegarde l'image au format texte binaire (P5)
+     * Sauvegarde l'image au format texte binaire (P6)
 	 * @param filename le nom du fichier 
      */
-    public void save_binary(String filename) throws IOException {
+    public void saveBinary(String filename) throws IOException {
 					
-			/*
-			 * height * width = nombre de pixels
-			 * nb pixel * 3 = nb de byte total car on a 3 couleurs
-			 */
-			byte[] aEcrire = new byte[this.getWidth() * this.getHeight() * 3];
-			byte couleurConvertie = 0;
+		/*
+		 * height * width = nombre de pixels
+		 * nb pixel * 3 = nb de byte total car on a 3 couleurs
+		 */
+		byte[] aEcrire = new byte[this.getWidth() * this.getHeight() * 3];
+		byte couleurConvertie = 0;
 			
-			// Pour se déplacer dans le grand tableau de byte
-			int numeroCouleur = 0;
-			int couleurPixel;
+		// Pour se déplacer dans le grand tableau de byte
+		int numeroCouleur = 0;
+		int couleurPixel;
+		String header = "P6\n" + this.getWidth() + " " + this.getHeight() + "\n255\n"; 
 			
-			
-		try {
-			FileWriter writer = new FileWriter(filename); 
-			// ecriture du header
-            writer.write("P6\n");
-            writer.write(this.getWidth() + " " + this.getHeight() + "\n");
-            writer.write("255\n");
-			writer.close();
-		} catch (IOException e) {
-			System.err.println(e.getMessage());
-		}
-		
         try {
-  
+			
 			FileOutputStream ecritureBinaire = new FileOutputStream(filename);
+			ecritureBinaire.write(header.getBytes());
 			
 			for (int pixOrd = 0; pixOrd < this.height; pixOrd++) {
 				for (int pixAbs = 0; pixAbs < this.width; pixAbs++) {
@@ -132,6 +122,13 @@ public class Image {
 					}
 				}
 			}
+			
+			/* Chaque write provoque un appel system et donc une attente matérielle
+			 * Pendant l'appel système, le programme est en pause. Le noyau attend le 
+			 * que matériel finisse le traitement et il donne la main à d'autres processus
+			 * (Context Switch). Réduire les write améliore les performances car
+			 * moins d'appels systèmes donc moins de pauses du programme
+			*/
 			
 			ecritureBinaire.write(aEcrire);
 			ecritureBinaire.close();
