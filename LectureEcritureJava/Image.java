@@ -1,5 +1,6 @@
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.FileOutputStream;
 
 public class Image {
     /*
@@ -84,4 +85,60 @@ public class Image {
             System.err.println("Erreur lors de l'écriture du fichier : " + e.getMessage());
         }
     }
+	
+	
+	/**
+     * Sauvegarde l'image au format texte binaire (P5)
+	 * @param filename le nom du fichier 
+     */
+    public void save_binary(String filename) throws IOException {
+					
+			/*
+			 * height * width = nombre de pixels
+			 * nb pixel * 3 = nb de byte total car on a 3 couleurs
+			 */
+			byte[] aEcrire = new byte[this.getWidth() * this.getHeight() * 3];
+			byte couleurConvertie = 0;
+			
+			// Pour se déplacer dans le grand tableau de byte
+			int numeroCouleur = 0;
+			int couleurPixel;
+			
+			
+		try {
+			FileWriter writer = new FileWriter(filename); 
+			// ecriture du header
+            writer.write("P6\n");
+            writer.write(this.getWidth() + " " + this.getHeight() + "\n");
+            writer.write("255\n");
+			writer.close();
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		}
+		
+        try {
+  
+			FileOutputStream ecritureBinaire = new FileOutputStream(filename);
+			
+			for (int pixOrd = 0; pixOrd < this.height; pixOrd++) {
+				for (int pixAbs = 0; pixAbs < this.width; pixAbs++) {
+					for (int couleur = 0; couleur <= 2 ; couleur++) {
+						couleurPixel = pixels[pixOrd][pixAbs][couleur]; // R, G ou B
+						
+						// Conversion en unsigned byte : 
+						couleurConvertie = (byte) (couleurPixel & 0xFF);
+						aEcrire[numeroCouleur] = couleurConvertie;
+						numeroCouleur++;
+					}
+				}
+			}
+			
+			ecritureBinaire.write(aEcrire);
+			ecritureBinaire.close();
+        } catch (IOException e) {
+            System.err.println("Erreur lors de l'écriture du fichier : " + e.getMessage());
+        }
+    }
+	
+	
 }
