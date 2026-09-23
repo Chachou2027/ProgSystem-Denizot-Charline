@@ -1,41 +1,34 @@
 public class Utils {
 
     public static int writeInt(byte[] memory, int offset, int value) {
-        // TODO: Écrire les 4 octets de 'value' dans 'memory'
-        // à partir de 'offset', en big-endian.
-		memory[offset + 0] = (byte)(value & 0xFF);
-		value = value >> 8;
-		memory[offset + 1] = (byte)(value & 0xFF);
-		value = value >> 8;
-		memory[offset + 2] = (byte)(value & 0xFF);
-		value = value >> 8;
-		memory[offset + 3] = (byte)(value & 0xFF);
-		
-		for (int i = 0; i < memory.length; i++) {
-			System.out.println(memory[i]);
-		}
-		System.out.println();
-		
-		// offset + 0 : F0
-		// offset + 1 : A1
-		// offset + 2 : B2
-		// offset + 3 : E3
-		
+
+		memory[offset] = (byte) ((value >> 24) & 0xFF);
+		memory[offset + 1] = (byte) ((value >> 16) & 0xFF);
+		memory[offset + 2] = (byte) ((value >> 8) & 0xFF);
+		memory[offset + 3] = (byte) ((value) & 0xFF);
+				
         return 4;
     }
 
     public static int readInt(byte[] memory, int offset) {
-        // TODO: Reconstituer le int sur 4 octets.
-        return 0;
+		int b1 = (int) (memory[offset] & 0xFF) << 24;
+		int b2 = (int) (memory[offset + 1] & 0xFF) << 16;
+		int b3 = (int) (memory[offset + 2] & 0xFF) << 8;
+		int b4 = (int) (memory[offset + 3] & 0xFF);
+		
+        return b1 + b2 + b3 + b4;
     }
 
     public static int writeShort(byte[] memory, int offset, short value) {
-        // TODO: Écrire les 2 octets de 'value'.
+		memory[offset] = (byte)((value >> 8) & 0xFF);
+        memory[offset + 1] = (byte) ((value) & 0xFF);
         return 2;
     }
 
     public static short readShort(byte[] memory, int offset) {
-        // TODO: Lire le short sur 2 octets.
-        return 0;
+		int b1 = (memory[offset] & 0xFF) << 8;
+		int b2 = (memory[offset + 1] & 0xFF);
+		
+        return (short) (b1 + b2);
     }
 }
