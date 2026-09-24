@@ -17,6 +17,8 @@ public class TestRunner {
 
 		assert Utils.readInt(buffer, 3) == value :
 				"Erreur writeInt / readInt";
+				
+				
 
 		short shortValue = (short) 0xF0A1;
 		int shortWritten = Utils.writeShort(buffer, 20, shortValue);
@@ -31,17 +33,32 @@ public class TestRunner {
 
 		assert Utils.readShort(buffer, 20) == shortValue :
 				"Erreur writeShort / readShort";
+				
+				
+		/* Test de l'entier négatif */
+		int negativeValue = 0xFFFFFFEA;
+		int intWritten = Utils.writeInt(buffer, 7, negativeValue);
+
+		assert intWritten == 4 : "writeInt doit retourner 4";
+
+		assert (buffer[7]  & 0xFF) == 0xFF : "Octet 0 incorrect";
+		assert (buffer[8]  & 0xFF) == 0xFF : "Octet 1 incorrect";
+		assert (buffer[9]  & 0xFF) == 0xFF : "Octet 2 incorrect";
+		assert (buffer[10]  & 0xFF) == 0xEA : "Octet 3 incorrect";
+
+		assert Utils.readInt(buffer, 7) == negativeValue :
+				"Erreur writeInt / readInt";
+		
 
 		System.out.println("[OK] Étape 2 validée !");
-	
+		
 	}
 
+	
 
     public static void main(String args[]) {
 		testStep2();
 		
 	}
-
-
 }
 
