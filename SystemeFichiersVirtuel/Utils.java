@@ -1,3 +1,5 @@
+import java.lang.Math;
+
 public class Utils {
 
     public static int writeInt(byte[] memory, int offset, int value) {
@@ -60,4 +62,18 @@ public class Utils {
     }
 	
 	
+	public static int writeString(byte[] memory, int offset,
+                                  String str, int maxLength) {
+
+		byte[] tableauChaine = str.getBytes();
+		int longTabChaine = tableauChaine.length;
+		int nbBytesACopier = Math.min(longTabChaine, maxLength);
+        System.arraycopy(tableauChaine, 0, memory, offset, nbBytesACopier);
+		
+		for (int indice = nbBytesACopier; indice < maxLength; indice++) {
+			memory[offset + indice] = 0x00;
+		}
+		
+		return maxLength;
+	}
 }
