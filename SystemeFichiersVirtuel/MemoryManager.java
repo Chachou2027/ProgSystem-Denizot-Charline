@@ -31,15 +31,13 @@ public class MemoryManager {
 
     private void initializeFilesystem() {
         writeSuperblock();
-
-        // TODO:
-        // Réserver les blocs système 0 à 128.
+		for (int i = 0; i < 16; i++) {
+			memory[512 + i] = 0xFF;
+		}
+		memory[528] = (byte) 0b00000001;
     }
 
     private void writeSuperblock() {
-        // TODO:
-        // Utiliser Utils pour écrire les métadonnées.
-
         Utils.writeString(
                 memory,
                 SUPERBLOCK_OFFSET,
