@@ -96,10 +96,10 @@ public class TestRunner {
 			assert buffer[i] == 0 :
 					"La zone inutilisée doit être nettoyée";
 		}
-	/*
+	
 		assert Utils.readString(buffer, 16, 16).equals("MYFS") :
 				"Erreur writeString / readString";
-	*/
+	
 		System.out.println("[OK] Étape 3 validée !");
 	
 	}

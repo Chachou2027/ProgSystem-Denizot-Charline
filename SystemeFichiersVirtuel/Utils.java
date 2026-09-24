@@ -3,7 +3,6 @@ import java.lang.Math;
 public class Utils {
 
     public static int writeInt(byte[] memory, int offset, int value) {
-
 		memory[offset] = (byte) ((value >> 24) & 0xFF);
 		memory[offset + 1] = (byte) ((value >> 16) & 0xFF);
 		memory[offset + 2] = (byte) ((value >> 8) & 0xFF);
@@ -35,7 +34,6 @@ public class Utils {
     }
 	
 	public static long writeLong(byte[] memory, int offset, long value) {
-
 		memory[offset] = (byte) ((value >> 56) & 0xFF);
 		memory[offset + 1] = (byte) ((value >> 48) & 0xFF);
 		memory[offset + 2] = (byte) ((value >> 40) & 0xFF);
@@ -76,4 +74,16 @@ public class Utils {
 		
 		return maxLength;
 	}
+	
+	public static String readString(byte[] memory, int offset,
+									int maxLength) {
+
+		int longueurChaine = 0;
+		while (longueurChaine < maxLength && memory[offset + longueurChaine] != 0x00) {
+			longueurChaine++;
+		}
+	
+		return new String(memory, offset, longueurChaine);
+	}
+	
 }
