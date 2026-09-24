@@ -32,7 +32,7 @@ public class MemoryManager {
     private void initializeFilesystem() {
         writeSuperblock();
 		for (int i = 0; i < 16; i++) {
-			memory[512 + i] = 0xFF;
+			memory[512 + i] = (byte) 0xFF;
 		}
 		memory[528] = (byte) 0b00000001;
     }
