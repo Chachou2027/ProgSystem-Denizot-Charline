@@ -68,4 +68,53 @@ public class MemoryManager {
     public byte[] getFilesystemMemory() {
         return memory;
     }
+	
+	
+	
+	public boolean setBlockUsed(int blockNumber, boolean used) {
+
+		if (blockNumber < 0 ||
+			blockNumber >= NUM_BLOCKS) {
+			return false;
+		}
+
+		int byteIndex = blockNumber / 8;
+		int bitPosition = blockNumber % 8;
+		int offset = BITMAP_OFFSET + byteIndex;
+
+		if (used) {
+			// TODO:
+			// Positionner le bit à 1.
+		} else {
+			// TODO:
+			// Positionner le bit à 0.
+		}
+
+		return true;
+	}
+
+	public int isBlockUsed(int blockNumber) {
+
+		if (blockNumber < 0 || blockNumber >= NUM_BLOCKS) {
+			return -1;
+		}
+
+		int byteIndex = blockNumber / 8;
+		int bitPosition = blockNumber % 8;	
+
+		// Lire le bit
+		return -1
+	}
+
+	public int allocateBlock() {
+
+		// TODO:
+		// Parcourir les blocs de données :
+		// 129 .. NUM_BLOCKS - 1.
+		//
+		// Retourner le premier bloc libre.
+		// Le marquer immédiatement comme utilisé.
+
+		return -1;
+	}
 }
