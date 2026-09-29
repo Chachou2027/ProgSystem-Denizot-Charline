@@ -112,12 +112,12 @@ public class MemoryManager {
 
 	public int allocateBlock() {
 
-		// TODO:
-		// Parcourir les blocs de données :
-		// 129 .. NUM_BLOCKS - 1.
-		//
-		// Retourner le premier bloc libre.
-		// Le marquer immédiatement comme utilisé.
+		for (int i = 129; i < NUM_BLOCKS - 1; i++) {
+		    if (isBlockUsed(i) == 0) {
+				setBlockUsed(i, true);
+				return i;
+			} 
+		}
 
 		return -1;
 	}

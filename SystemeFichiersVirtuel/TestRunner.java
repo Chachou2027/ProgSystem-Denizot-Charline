@@ -220,6 +220,7 @@ public class TestRunner {
 		testStep2();
 		testStep3();
 		testStep4();
+		testStep5();
 		
 	}
 }
