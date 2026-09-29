@@ -6,42 +6,37 @@ public class Inode {
     public static final int INODE_SIZE = 128;
     public static final int DIRECT_POINTERS = 10;
 
-    public Inode(
-            MemoryManager memoryManager,
-            int inodeNumber) {
-
+    public Inode(MemoryManager memoryManager, int inodeNumber) {
         this.memoryManager = memoryManager;
         this.inodeNumber = inodeNumber;
     }
 
     public int getInodeOffset() {
-        // TODO:
-        // Calculer l'offset exact de l'inode.
-        return 0;
+		// Offset(N) = INODE_TABLE_OFFSET + N * INODE_SIZE
+        return 1024 + this.inodeNumber * INODE_SIZE;
     }
 
     public int getFileType() {
-        // TODO:
         // Lire le type à offset + 4.
-        return 0;
+        return getInodeOffset() + 4;
     }
 
     public int getFileSize() {
-        // TODO:
         // Lire la taille à offset + 8.
-        return 0;
+        return getInodeOffset() + 8;
     }
 
     public int[] getDirectPointers() {
 
-        byte[] memory =
-                memoryManager.getFilesystemMemory();
+        byte[] memory = memoryManager.getFilesystemMemory();
 
-        int[] pointers =
-                new int[DIRECT_POINTERS];
+        int[] pointers = new int[DIRECT_POINTERS];
 
         // TODO:
         // Lire les 10 pointeurs directs.
+		for (int i = 0; i < DIRECT_POINTERS; i++) {
+			pointers[i] = this.getInodeOffset() + 32 + 4*i;
+		}
 
         return pointers;
     }
