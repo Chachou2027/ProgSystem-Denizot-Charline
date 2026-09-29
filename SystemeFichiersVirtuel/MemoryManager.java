@@ -84,7 +84,6 @@ public class MemoryManager {
 		int masque = 1 << bitPosition;
 
 		if (used) {
-			// TODO:
 			// Positionner le bit à 1 -> octet |= masque
 		    memory[offset] |= masque;
 		} else {
@@ -107,7 +106,8 @@ public class MemoryManager {
 
 		// Lire le bit en utilisant le byte
 		 
-		return memory[BITMAP_OFFSET + byteIndex] & masque > 0 ? 1 : 0;
+		return (memory[BITMAP_OFFSET + byteIndex] & masque) > 0 ? 1 : 0;
+		// return data >> bitPosition & 0x1
 	}
 
 	public int allocateBlock() {
