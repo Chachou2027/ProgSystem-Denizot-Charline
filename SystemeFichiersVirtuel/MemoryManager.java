@@ -81,13 +81,15 @@ public class MemoryManager {
 		int byteIndex = blockNumber / 8;
 		int bitPosition = blockNumber % 8;
 		int offset = BITMAP_OFFSET + byteIndex;
+		int masque = 1 << bitPosition;
 
 		if (used) {
 			// TODO:
-			// Positionner le bit à 1.
+			// Positionner le bit à 1 -> octet |= masque
+		    memory[offset] |= masque;
 		} else {
-			// TODO:
-			// Positionner le bit à 0.
+			// Positionner le bit à 0 -> octet = XOR masque -> ^= masque
+			memory[offset] ^= masque;
 		}
 
 		return true;
@@ -101,9 +103,11 @@ public class MemoryManager {
 
 		int byteIndex = blockNumber / 8;
 		int bitPosition = blockNumber % 8;	
+		int masque = 1 << bitPosition;
 
-		// Lire le bit
-		return -1
+		// Lire le bit en utilisant le byte
+		 
+		return memory[BITMAP_OFFSET + byteIndex] & masque > 0 ? 1 : 0;
 	}
 
 	public int allocateBlock() {
