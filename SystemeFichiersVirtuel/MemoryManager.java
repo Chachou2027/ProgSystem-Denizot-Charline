@@ -34,7 +34,7 @@ public class MemoryManager {
 		for (int i = 0; i < 16; i++) {
 			memory[512 + i] = (byte) 0xFF;
 		}
-		memory[528] = (byte) 0b00000001;
+		//memory[528] = (byte) 0b00000001;
     }
 
     private void writeSuperblock() {
@@ -87,8 +87,8 @@ public class MemoryManager {
 			// Positionner le bit à 1 -> octet |= masque
 		    memory[offset] |= masque;
 		} else {
-			// Positionner le bit à 0 -> octet = XOR masque -> ^= masque
-			memory[offset] ^= masque;
+			// Positionner le bit à 0 -> octet &= ~masque
+			memory[offset] &= ~masque;
 		}
 
 		return true;
@@ -103,8 +103,6 @@ public class MemoryManager {
 		int byteIndex = blockNumber / 8;
 		int bitPosition = blockNumber % 8;	
 		int masque = 1 << bitPosition;
-
-		// Lire le bit en utilisant le byte
 		 
 		return (memory[BITMAP_OFFSET + byteIndex] & masque) > 0 ? 1 : 0;
 		// return data >> bitPosition & 0x1;
