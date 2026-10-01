@@ -38,7 +38,6 @@ public class VirtualFileSystem {
             return false;
         }
 
-        // TODO:
         // Construire l'inode.
         Inode inode = new Inode(memoryManager, inodeNum);
         // L'initialiser comme fichier vide.
@@ -52,4 +51,69 @@ public class VirtualFileSystem {
     public MemoryManager getMemoryManager() {
         return memoryManager;
     }
+    
+    
+    public boolean writeFile(
+        int inodeNum,
+        byte[] data) {
+
+        int blocksNeeded =
+                (data.length
+                + MemoryManager.BLOCK_SIZE - 1)
+                / MemoryManager.BLOCK_SIZE;
+
+        if (blocksNeeded > Inode.DIRECT_POINTERS) {
+            return false;
+        }
+
+        int[] blockPointers =
+                new int[Inode.DIRECT_POINTERS];
+
+        // Allouer blocksNeeded blocs.
+        for (int i = 0; i < blocksNeeded; i++) {
+            int numBlocAloue = memoryManager.allocateBlock();
+            if (numBlocAloue != -1) {
+                blockPointers[i] = numBlocAloue;
+            } else {
+                // Plus de place ds la mémoire, l'allocation échoue
+                return false;
+            }
+        }
+
+        byte[] memory =
+                memoryManager.getFilesystemMemory();
+
+        int bytesRemaining =
+                data.length;
+
+        int dataSrcOffset = 0;
+
+        // TODO:
+        // Pour chaque bloc :
+        for (int i = 0; i < blocksNeeded; i++) {
+            
+            // - calculer la quantité à copier ;
+            int idDebutACopier =  i * memoryManager.BLOCK_SIZE;
+            int idFinACopier = Math.min(memoryManager.BLOCK_SIZE, bytesRemaining);
+            int qteACopier = idFinACopier - idDebutACopier;
+            // - récupérer le numéro du bloc ;
+            int numBloc = blockPointers[i];
+            
+            // - calculer son offset physique ;
+            int offsetPhysique = numBloc * memoryManager.BLOCK_SIZE;
+            
+            // - copier les données.
+            System.arraycopy(data, i * memoryManager.BLOCK_SIZE, memory, offsetPhysique, qteACopier);
+            
+            bytesRemaining -= qteACopier;
+        }
+
+        // Mettre à jour l'inode.
+        Inode inode = new Inode(memoryManager, inodeNum);
+        inode.writeToMemory(1, data.length, System.currentTimeMillis(), 
+                           System.currentTimeMillis(), blockPointers, 0, (short) 0664, 1);
+
+        return true;
+    }
+    
 }
