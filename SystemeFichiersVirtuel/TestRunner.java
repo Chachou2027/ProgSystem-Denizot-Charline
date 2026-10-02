@@ -439,7 +439,7 @@ public class TestRunner {
 				
 				
 		int[] tabPointeursDirects = inode.getDirectPointers();
-		assert tabPointeursDirects[0] >= 0 :
+		assert tabPointeursDirects[0] >= 0:
 		        "Le pointeur 1 doit être supérieur ou égal à 0";
 				
 		for (int i = 1; i < tabPointeursDirects.length; i++) {
@@ -465,6 +465,82 @@ public class TestRunner {
 		System.out.println("[OK] Étape 9 test fichier 512 octets validée !");
 	}
 	
+	
+	
+	public static void testStep9Sup2() {
+		System.out.println("=== TEST ÉTAPE 9 : Entrées/Sorties Fichier, fichier de 513 octets ===");
+		VirtualFileSystem vfs =
+				new VirtualFileSystem();
+
+		MemoryManager memoryManager = vfs.getMemoryManager();
+		byte[] memory = memoryManager.getFilesystemMemory();
+		assert vfs.createFile(
+				"/",
+				"fichier513.txt");
+				
+		byte[] fichier = new byte[513];
+		for (int octet = 0; octet < fichier.length; octet++) {
+			fichier[octet] = (byte) (2 & 0XFF);
+		}
+				
+		boolean writeOk = vfs.writeFile(1, fichier);
+		
+		assert writeOk : "Erreur d'écriture";
+				
+		Inode inode = new Inode(vfs.getMemoryManager(), 1);
+
+		assert inode.getFileSize()
+				== fichier.length :
+				"Taille d'inode incorrecte";
+				
+				
+		int[] tabPointeursDirects = inode.getDirectPointers();
+		assert tabPointeursDirects[0] >= 0 && tabPointeursDirects[1] >= 0:
+		        "Le pointeur 1 et 2 doivent être supérieur ou égal à 0";
+				
+		for (int i = 2; i < tabPointeursDirects.length; i++) {
+			assert tabPointeursDirects[i] == -1 : 
+			"Erreur, le pointeur " + i + " doit être égal à -1";
+		}
+		
+		
+		byte[] readBytes =
+				vfs.readFile(1);
+
+		assert readBytes != null :
+				"Buffer lu nul";
+
+		assert readBytes.length
+				== fichier.length :
+				"Longueur lue incorrecte";
+
+		for (int i = 0; i < fichier.length; i++) {
+			assert readBytes[i] == fichier[i] :
+					"Octet incorrect à l'indice " + i;
+		}
+		
+		
+		int nombreBlocRequis = (fichier.length
+                + memoryManager.BLOCK_SIZE - 1)
+                / memoryManager.BLOCK_SIZE;
+				
+		assert nombreBlocRequis == 2 : 
+		"Erreur, le fichier de 513 octet doit être écrit sur 2 blocs";
+		
+		int offsetPremierBlocMemory = tabPointeursDirects[0] * memoryManager.BLOCK_SIZE;
+		int offsetDeuxiemeBlocMemory = tabPointeursDirects[1] * memoryManager.BLOCK_SIZE;
+		for (int i = 0; i < vfs.getMemoryManager().BLOCK_SIZE; i++) {
+			assert memory[offsetPremierBlocMemory + i] == fichier[i];
+		}
+		
+		assert memory[offsetDeuxiemeBlocMemory] == fichier[512];
+		
+		
+		System.out.println("[OK] Étape 9 test fichier 513 octets validée !");
+	}
+	
+
+	
 
 
 	
@@ -479,6 +555,7 @@ public class TestRunner {
         testStep8();
 		testStep9();
 		testStep9Sup1();
+		testStep9Sup2();
 		
 	}
 }
