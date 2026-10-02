@@ -1,3 +1,4 @@
+
 public class TestRunner {
 
     public static void testStep2() {
@@ -407,18 +408,64 @@ public class TestRunner {
 			assert readBytes[i] == original[i] :
 					"Octet incorrect à l'indice " + i;
 		}
-		
-		// Ajout d'un fichier de 512 octets
-		
-		// que l’écriture réussit ;
-		// que l’inode contient une taille de 512 ;
-		// qu’un seul pointeur direct est utilisé ;
-		// que les 512 octets physiques sont corrects ;
-		// que la lecture restitue exactement les mêmes octets.
-		
-		
+				
 		System.out.println("[OK] Étape 9 validée !");
 	}
+	
+	public static void testStep9Sup1() {
+		System.out.println("=== TEST ÉTAPE 9 : Entrées/Sorties Fichier, fichier de 512 octets ===");
+		
+		VirtualFileSystem vfs =
+				new VirtualFileSystem();
+
+		assert vfs.createFile(
+				"/",
+				"fichier512.txt");
+				
+		byte[] fichier = new byte[512];
+		for (int octet = 0; octet < fichier.length; octet++) {
+			fichier[octet] = (byte) (2 & 0XFF);
+		}
+				
+		boolean writeOk = vfs.writeFile(1, fichier);
+		
+		assert writeOk : "Erreur d'écriture";
+				
+		Inode inode = new Inode(vfs.getMemoryManager(), 1);
+
+		assert inode.getFileSize()
+				== fichier.length :
+				"Taille d'inode incorrecte";
+				
+				
+		int[] tabPointeursDirects = inode.getDirectPointers();
+		assert tabPointeursDirects[0] >= 0 :
+		        "Le pointeur 1 doit être supérieur ou égal à 0";
+				
+		for (int i = 1; i < tabPointeursDirects.length; i++) {
+			assert tabPointeursDirects[i] == -1 : 
+			"Erreur, le pointeur " + i + " doit être égal à -1";
+		}
+		
+		byte[] readBytes =
+				vfs.readFile(1);
+
+		assert readBytes != null :
+				"Buffer lu nul";
+
+		assert readBytes.length
+				== fichier.length :
+				"Longueur lue incorrecte";
+
+		for (int i = 0; i < fichier.length; i++) {
+			assert readBytes[i] == fichier[i] :
+					"Octet incorrect à l'indice " + i;
+		}
+		
+		System.out.println("[OK] Étape 9 test fichier 512 octets validée !");
+	}
+	
+
 
 	
 
@@ -431,6 +478,7 @@ public class TestRunner {
         testStep7();
         testStep8();
 		testStep9();
+		testStep9Sup1();
 		
 	}
 }

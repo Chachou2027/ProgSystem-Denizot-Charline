@@ -68,6 +68,8 @@ public class VirtualFileSystem {
 
         int[] blockPointers =
                 new int[Inode.DIRECT_POINTERS];
+				
+		Arrays.fill(blockPointers, -1);
 
         // Allouer blocksNeeded blocs.
         for (int i = 0; i < blocksNeeded; i++) {
