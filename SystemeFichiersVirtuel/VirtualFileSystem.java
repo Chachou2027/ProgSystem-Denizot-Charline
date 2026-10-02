@@ -88,24 +88,23 @@ public class VirtualFileSystem {
 
         int dataSrcOffset = 0;
 
-        // TODO:
         // Pour chaque bloc :
         for (int i = 0; i < blocksNeeded; i++) {
             
-            // - calculer la quantité à copier ;
-            int idDebutACopier =  i * memoryManager.BLOCK_SIZE;
-            int idFinACopier = Math.min(memoryManager.BLOCK_SIZE, bytesRemaining);
-            int qteACopier = idFinACopier - idDebutACopier;
+            // - calculer la quantité d'octet du fragment à copier ;
+            int positionDepartChunk =  i * memoryManager.BLOCK_SIZE;
+            int qteOctetFragment = Math.min(memoryManager.BLOCK_SIZE, bytesRemaining);
+			
             // - récupérer le numéro du bloc ;
             int numBloc = blockPointers[i];
             
-            // - calculer son offset physique ;
-            int offsetPhysique = numBloc * memoryManager.BLOCK_SIZE;
+            // - calculer l'offset du fragment dans memory;
+            int offsetDansMemory = numBloc * memoryManager.BLOCK_SIZE;
             
             // - copier les données.
-            System.arraycopy(data, i * memoryManager.BLOCK_SIZE, memory, offsetPhysique, qteACopier);
+            System.arraycopy(data, positionDepartChunk, memory, offsetDansMemory, qteOctetFragment);
             
-            bytesRemaining -= qteACopier;
+            bytesRemaining -= qteOctetFragment;
         }
 
         // Mettre à jour l'inode.
@@ -115,5 +114,61 @@ public class VirtualFileSystem {
 
         return true;
     }
+	
+	public byte[] readFile(int inodeNum) {
+
+		Inode inode =
+				new Inode(memoryManager, inodeNum);
+
+		int fileSize =
+				inode.getFileSize();
+
+		if (fileSize == 0) {
+			return new byte[0];
+		}
+
+		byte[] fileData =
+				new byte[fileSize];
+
+		byte[] memory =
+				memoryManager.getFilesystemMemory();
+
+		int[] blockPointers =
+				inode.getDirectPointers();
+				
+	    int blocksNeeded =
+                (fileSize
+                + MemoryManager.BLOCK_SIZE - 1)
+                / MemoryManager.BLOCK_SIZE;
+				
+		int bytesRemaining = fileData.length;
+
+		// Parcourir les blocs utilisés.
+		// Copier chaque fragment vers fileData.
+		
+		for (int i = 0; i < blocksNeeded; i++) {
+            
+            // - calculer la quantité à copier ;
+            int qteOctetFragment = Math.min(memoryManager.BLOCK_SIZE, bytesRemaining);
+			
+			// calculer l'offset où copier les données dans fileData
+			int offsetFileData = i * memoryManager.BLOCK_SIZE;
+         
+            // - récupérer le numéro du bloc ;
+            int numBloc = blockPointers[i];
+            
+            // - calculer son offset physique ;
+            int offsetDansMemory = numBloc * memoryManager.BLOCK_SIZE;
+            
+            // - copier les données.
+            System.arraycopy(memory, offsetDansMemory, fileData, offsetFileData, qteOctetFragment);
+            
+            bytesRemaining -= qteOctetFragment;
+        }
+
+		return fileData;
+	}
+	
+	
     
 }
