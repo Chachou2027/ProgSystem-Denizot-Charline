@@ -564,11 +564,6 @@ public class TestRunner {
 	}
 	
 
-	
-
-
-	
-
     public static void main(String args[]) {
 		testStep2();
 		testStep3();
@@ -580,8 +575,7 @@ public class TestRunner {
 		testStep9();
 		testStep9Sup1();
 		testStep9Sup2();
-		testStep9Sup3();
-		
+		testStep9Sup3();		
 	}
 }
 

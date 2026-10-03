@@ -57,6 +57,10 @@ public class VirtualFileSystem {
         int inodeNum,
         byte[] data) {
 
+		if (inodeNum < 0 || inodeNum > memoryManager.MAX_INODES - 1 ) {
+			return false;
+		}
+	
         int blocksNeeded =
                 (data.length
                 + MemoryManager.BLOCK_SIZE - 1)
@@ -118,6 +122,10 @@ public class VirtualFileSystem {
     }
 	
 	public byte[] readFile(int inodeNum) {
+		
+		if (inodeNum < 0 || inodeNum > memoryManager.MAX_INODES - 1 ) {
+			return null;
+		}
 
 		Inode inode =
 				new Inode(memoryManager, inodeNum);
@@ -169,6 +177,36 @@ public class VirtualFileSystem {
         }
 
 		return fileData;
+	}
+	
+	public boolean deleteFile(int inodeNum) {
+		
+		if (inodeNum < 0 || inodeNum > memoryManager.MAX_INODES - 1 ) {
+			return false;
+		}
+		
+		Inode inode = new Inode(memoryManager, inodeNum);
+		
+		if (inode.getFileType() == 0) {
+			return false;
+		}
+
+		
+		int[] blockPointers = inode.getDirectPointers();
+		
+		for (int i = 0; i < blockPointers.length; i++) {
+			int numBloc = blockPointers[i];
+			if (numBloc > -1) {
+				memoryManager.setBlockUsed(numBloc, false);
+			} 
+		}
+		int[] pointeurReset = new int[10];
+		Arrays.fill(pointeurReset, -1);
+		inode.writeToMemory(0, 0, System.currentTimeMillis(), 
+		                   System.currentTimeMillis(), pointeurReset, 
+						   0, (short) 0664, 0);
+		
+		return true; // STUB
 	}
 	
 	
