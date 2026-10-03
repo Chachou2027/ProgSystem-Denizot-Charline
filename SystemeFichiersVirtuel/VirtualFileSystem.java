@@ -206,7 +206,7 @@ public class VirtualFileSystem {
 		                   System.currentTimeMillis(), pointeurReset, 
 						   0, (short) 0664, 0);
 		
-		return true; // STUB
+		return true; 
 	}
 	
 	

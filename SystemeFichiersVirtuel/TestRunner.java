@@ -585,11 +585,24 @@ public class TestRunner {
 		writeOk = vfs.writeFile(508, fichier);
 		assert !writeOk : "Une inode numInode MAX_INODES a été créée !";
 		
+		boolean deleteOk = vfs.deleteFile(5);
+		assert !deleteOk : "Supression d'une Inode inutilisée !!!";
+		
+		// Test d'une création / suppression d'un fichier valide
 		writeOk = vfs.writeFile(0, fichier);
 		assert writeOk : "Erreur d'écriture";
 		
-		boolean deleteOk = vfs.deleteFile(5);
-		assert !deleteOk : "Supression d'une Inode inutilisée !!!";
+		deleteOk = vfs.deleteFile(0);
+		assert deleteOk : "Erreur de suppression d'un fichier valide";
+		
+		// Vérification de la réinitialisation de l'inode 
+		Inode inodeVerif = new Inode(vfs.getMemoryManager(), 0);
+		assert inodeVerif.getFileType() == 0;
+		assert inodeVerif.getFileSize() == 0;
+		int[] tabPointeurs = inodeVerif.getDirectPointers();
+		for (int pointeur : tabPointeurs) {
+			assert pointeur == -1;
+		}
 		
 		System.out.println("[OK] Étape 10 test supression d'un fichier validé !");
 	}
