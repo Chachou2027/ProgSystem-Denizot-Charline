@@ -539,6 +539,30 @@ public class TestRunner {
 		System.out.println("[OK] Étape 9 test fichier 513 octets validée !");
 	}
 	
+	
+	public static void testStep9Sup3() {
+		System.out.println("=== TEST ÉTAPE 9 : Entrées/Sorties Fichier, "
+		                    + " fichier qui tient sur plus de 10 bloc   ===");
+		VirtualFileSystem vfs =
+				new VirtualFileSystem();
+				
+		assert vfs.createFile(
+				"/",
+				"fichier513.txt");
+				
+		byte[] fichier = new byte[5121];
+		for (int octet = 0; octet < fichier.length; octet++) {
+			fichier[octet] = (byte) (2 & 0XFF);
+		}
+				
+		boolean writeOk = vfs.writeFile(1, fichier);
+		
+		assert !writeOk : "Erreur d'écriture";
+				
+		
+		System.out.println("[OK] Étape 9 test fichier trop grand (+ de 10 blocs) octets validée !");
+	}
+	
 
 	
 
@@ -556,6 +580,7 @@ public class TestRunner {
 		testStep9();
 		testStep9Sup1();
 		testStep9Sup2();
+		testStep9Sup3();
 		
 	}
 }
