@@ -563,6 +563,37 @@ public class TestRunner {
 		System.out.println("[OK] Étape 9 test fichier trop grand (+ de 10 blocs) octets validée !");
 	}
 	
+	public static void testStep10() {
+		System.out.println("=== TEST ÉTAPE 10 : Suppression d'un fichier ");
+		VirtualFileSystem vfs =
+				new VirtualFileSystem();
+				
+		assert vfs.createFile(
+				"/",
+				"fichier513.txt");
+				
+		byte[] fichier = new byte[512];
+		for (int octet = 0; octet < fichier.length; octet++) {
+			fichier[octet] = (byte) (2 & 0XFF);
+		}
+				
+		// Tests des cas d'erreurs
+		
+		boolean writeOk = vfs.writeFile(-1, fichier);
+		assert !writeOk : "Une inode numInode -1 a été créée !";
+		
+		writeOk = vfs.writeFile(508, fichier);
+		assert !writeOk : "Une inode numInode MAX_INODES a été créée !";
+		
+		writeOk = vfs.writeFile(0, fichier);
+		assert writeOk : "Erreur d'écriture";
+		
+		boolean deleteOk = vfs.deleteFile(5);
+		assert !deleteOk : "Supression d'une Inode inutilisée !!!";
+		
+		System.out.println("[OK] Étape 10 test supression d'un fichier validé !");
+	}
+	
 
     public static void main(String args[]) {
 		testStep2();
@@ -575,7 +606,8 @@ public class TestRunner {
 		testStep9();
 		testStep9Sup1();
 		testStep9Sup2();
-		testStep9Sup3();		
+		testStep9Sup3();
+		testStep10();		
 	}
 }
 
