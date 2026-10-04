@@ -1,0 +1,54 @@
+Compte rendu : 
+
+Question 1 : Représentation binaire
+
+En big endian, l'octet de poids fort est à gauche et l'octet de poids faible à droite et en little endian c'est l'inverse (poids faible à gauche, poids fort à droite).
+De ce fait quand on écrit un nombre en mémoire, les décalages de bits (opérateur >>) changent : 
+Big endian : memory[offset] = (byte)((value >> 8) & 0xFF);
+			 memory[offset + 1] = (byte) (value & 0xFF);
+			 
+Little endian : memory[offset + 1] = (byte)((value >> 8) & 0xFF);
+			    memory[offset] = (byte) (value & 0xFF);
+
+Si writeInt() écrit en big endian : poids fort à gauche, poids faible à droite. Si readInt lit en little endian, il va croire que le poids fort (à gauche) est le poids faible et que le poids faible (à droite) est le poids fort. Donc les décalages binaires ne seront pas les bons et le nombre lu ne sera pas du tout le bon.
+Exemple pour le short n = 10001000 00010101, l'octet de poids fort est 10001000 et le poids faible est 00010001. En little endian ce serait l'inverse.
+
+Question 2 : Signes et octets
+Le masque 0xFF sert à "nettoyer" les octets. Lorsqu'on fais une opération sur un byte, la JVM le transforme en int signé(unité de base de la JVM). Si le bit le plus à droite de l'octet extrait contient un 1, java va étendre ce 1 et "remplir" les 24 bits à gauche de 1 (étant donné qu'on travaille sur un int 32 bits). Le nombre extrait, sans appliquer le 0xFF sera alors faussé par ces 1 rajoutés.
+L'opérateur & est un ET logique : 0 & 0 = 0, 0 & 1 = 0 et 1 & 1 = 1.
+Le masque 0xFF vaut 0000000..11111111 (32 zéros à gauche, 8 un à droite). Les 28 un de gauche rajoutés par la JVM vont disparaître (0 & 1 = 0) pour ne laisser que les nombres de l'octets extraits grâce aux 1 du masque.
+
+Question 3 : Sérialisation
+En testant uniquement readInt(writeInt(x)) == x, on ne teste que la valeur globale renvoyée par readInt. Si writeInt décale mal les octets et que readInt fais la même chose à la lecture, les données seront éronnées mais readInt(writeInt(x)) == x sera vrai même si les données sont mal écrites et donc indéchiffrable pour les autres systèmes. Cette égalité ne permet pas de vérifier que les donnnées sont écrites au bon endroit dans la mémoire ni si elles sont bien représentées (Big Endian, little endian).
+
+Echantilloner les valeurs de x : tester les valeurs limites, tester des valeurs négatives pour vérifier la bonne utilisation du masque 0xFF, utiliser des valeurs avec des bits distincts (ex : 12345) pour vérifier chaque octet individuellement sans tomber sur la même valeur que celui d'à côté par chance
+
+Inspecter les octets un par un permet de vérfier que les conventions Big Endian ou Little Endian sont bien respectées. Cela permet aussi de vérifier le calcul des offsets lors de l'écriture ou de la lecture (lire ou écrire au bon endroit). Inspecter les octets permet aussi de détecter si les conversions de bits signés ont été mal interprétés par la JVM.
+
+
+Question 4 : Bitmap
+Le VFS contient 2048 blocs, si on prend 1 entier de 4 octets par blocs, il faut 4 * 2048 = 8192 octets pour les représenter.
+Si on prend 1 bit par bloc pour, N bloc, le bitmap nécéssite N/8 octets donc pour N = 2048 blocs, le bitmap nécessite 2048/8 = 256 octets contre 8192.
+Représenter un bloc par un entier prend donc 32 fois plus de places que représenter 1 bloc par un bit.
+
+Question 5 : Layout
+Les offsets sont stockés dans des constantes dans MemoryManager. Si les offsets du bitmap changent alors que les fonctions utilisent toujours sont ancien emplacement, on ne réserverai pas les blocs puisqu'on écrirait plus dans le bitmap. Les données seraient donc corrompus car aucune fonction n'écrirait au bon endroit dans la mémoire et les blocs ne seraient pas réservés où libérés dans le Bitmap. Tout doit reposer sur un adressage fixe pour que les offsets calculs soient toujours dans la bonne zone mémoire.
+
+Question 6 : Inode
+Le contenu doit être écrit dans les blocs réservés aux zones de données qui ont une position fixes et determinées. Si on écrit le contenu en même temps que les méta données c'est à dire que tout est dans l'inode, chaque inode aurait une taille différente. Calculer les offsets pour récupérer le contenu du fichier serait impossible car tous les calculs pour retrouver le numéros de l'inode repose sur le fait que leur taille est identique. Les inodes contiennent des pointeurs qui contiennent l'adresse mémoire du contenu du fichier dans la zone de données donc elles contiennent indirectement le contenu du fichier qu'elles représentent puisqu'elles permettent de le retrouver grâce aux pointeurs qui sont stockés dans l'inode.
+
+Question 7 : Allocation
+Les blocs systèmes sont des zones réservés qui ne doivent surtout pas être réécrite. Si allocateBlock() commence, les bloc systèmes (0 à 128) peuvent être dit "libres" par la fonction donc on pourrait écrire du contenu dedans. Si on écrit du contenu dans les blocs systèmes, tous le Système de fichier serait corrompu. Il faut donc impérativement commencer au bloc 129 car c'est à partir de ce bloc que la zone de données (réservées à l'écriture de données) commence. De cette manière, les blocs systèmes sont isolés et ne peuvent pas être réécrits.
+
+Question 8 : Fragmentation
+Oui c'est possible, le niveau de fragmentation dépend de la manière dont les blocs libres et occupés sont agencés.
+Par exemple un système dans lequel 5 bloc à la suite sont libres, permettra d'écrire un fichier qui tient sur 5 blocs de manière contigu.
+La fragmentation sera donc faible.
+
+[L] représente un bloc libre et [O] un bloc occupé : 
+Représentation : [L][L][L][L][L][O][O][O][O]
+
+Dans le cas contraire, si un système possède 5 bloc libres éparpillés au milieu de bloc occupés, le fichier écrits sur 5 blocs sera fortement fragmenté
+Représentation : [L][L][O][L][O][L][O][L][O]
+
+Les 2 systèmes ont le même nombre de bloc mais une fragmentation différente
