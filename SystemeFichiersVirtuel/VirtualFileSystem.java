@@ -14,17 +14,13 @@ public class VirtualFileSystem {
         byte[] memory =
                 memoryManager.getFilesystemMemory();
 
-        // TODO:
-        // Parcourir les inodes de 0 à MAX_INODES - 1.
         for (int numIndode = 0; numIndode < memoryManager.MAX_INODES; numIndode++) {
             Inode inode = new Inode(memoryManager, numIndode);
             if (inode.getFileType() == 0) {
                 return numIndode;
             }
         }
-        // Identifier le premier inode libre.
-        // Retourner son numéro.
-
+		
         return -1;
     }
 
@@ -81,7 +77,6 @@ public class VirtualFileSystem {
             if (numBlocAloue != -1) {
                 blockPointers[i] = numBlocAloue;
             } else {
-                // Plus de place ds la mémoire, l'allocation échoue
                 return false;
             }
         }
@@ -94,7 +89,6 @@ public class VirtualFileSystem {
 
         int dataSrcOffset = 0;
 
-        // Pour chaque bloc :
         for (int i = 0; i < blocksNeeded; i++) {
             
             // - calculer la quantité d'octet du fragment à copier ;
@@ -152,9 +146,6 @@ public class VirtualFileSystem {
                 / MemoryManager.BLOCK_SIZE;
 				
 		int bytesRemaining = fileData.length;
-
-		// Parcourir les blocs utilisés.
-		// Copier chaque fragment vers fileData.
 		
 		for (int i = 0; i < blocksNeeded; i++) {
             
@@ -208,7 +199,5 @@ public class VirtualFileSystem {
 		
 		return true; 
 	}
-	
-	
-    
+   
 }

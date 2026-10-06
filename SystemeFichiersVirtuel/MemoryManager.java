@@ -34,7 +34,7 @@ public class MemoryManager {
 		for (int i = 0; i < 16; i++) {
 			memory[512 + i] = (byte) 0xFF;
 		}
-		//memory[528] = (byte) 0b00000001;
+
     }
 
     private void writeSuperblock() {
