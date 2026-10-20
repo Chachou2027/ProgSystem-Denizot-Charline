@@ -21,6 +21,11 @@ public class ProducteurConsommateur {
     
 	/* Indice d'écriture pour les producteurs */
     private int teteEcriture = 0;
+	
+	/* Monitoring des résultats finaux */
+	private int nbDeProduitsProduits = 0;
+	
+	private int nbProduitsConsommes = 0;
     	
     
     public Semaphore getPlacesLibres() {
@@ -52,13 +57,26 @@ public class ProducteurConsommateur {
 	public void insererProduit(int produit) {
 		buffer[teteEcriture] = produit;
 		teteEcriture = (teteEcriture + 1) %  TAILLE_BUFFER;
+		nbDeProduitsProduits++;
+		System.out.println("[PRODUCTION] Produit inséré. Total produits produits : " + nbDeProduitsProduits);
 
 	}
 	
 	public Integer retirerProduit() {
-		Integer valeurLue = buffer.poll();
+		Integer valeurLue = buffer[teteLecture];
+		buffer[teteLecture] = null;
 		teteLecture = (teteLecture + 1) % TAILLE_BUFFER;
+		nbProduitsConsommes++;
+		System.out.println("[CONSOMMATION] Produit " + valeurLue + " consommé. Total consommé : " + nbProduitsConsommes);
 		return valeurLue;
+	}
+	
+	public int getNbDeProduitsProduits() {
+		return nbDeProduitsProduits;
+	}
+
+	public int getNbProduitsConsommes() {
+		return nbProduitsConsommes;
 	}
     
 }
