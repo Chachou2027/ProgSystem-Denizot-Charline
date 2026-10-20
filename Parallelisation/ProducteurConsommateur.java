@@ -56,8 +56,7 @@ public class ProducteurConsommateur {
 	}
 	
 	public Integer retirerProduit() {
-		Integer valeurLue = buffer[teteLecture];
-		buffer[teteLecture] = null;
+		Integer valeurLue = buffer.poll();
 		teteLecture = (teteLecture + 1) % TAILLE_BUFFER;
 		return valeurLue;
 	}
