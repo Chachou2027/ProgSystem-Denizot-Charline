@@ -27,19 +27,19 @@ public class TestSemaphore {
 		attendreThreadProd(NB_PROD_EQUILIBRE, threadProducteurs);
 		attendreThreadConso(NB_CONSO_EQUILIBRE, threadConsommateur);
 		
-		System.out.println("--- FIN DU SCENARIO EQUILIBRE ---");
+		System.out.println("\n--- FIN DU SCENARIO EQUILIBRE ---\n");
 		System.out.println("Total produits générés : " + pc.getNbDeProduitsProduits());
 		System.out.println("Total produits consommés : " + pc.getNbProduitsConsommes());
 		
 		
-		System.out.println("--- DEBUT DU SCENARIO DESEQUILIBRE ---\n 5 producteurs de 5 produits et 2 consommateurs de 5");
+		System.out.println("\n--- DEBUT DU SCENARIO DESEQUILIBRE ---\n 5 producteurs de 5 produits et 2 consommateurs de 5\n");
 	
 		creerThreadProd(NB_PROD_DESEQUILIBRE, threadProdDesequilibre);
 		creerThreadConso(NB_CONSO_DESEQUILIBRE, threadConDesequilibre);
 		attendreThreadProd(NB_PROD_DESEQUILIBRE, threadProdDesequilibre);
 		attendreThreadConso(NB_CONSO_DESEQUILIBRE, threadConDesequilibre);
 		
-		System.out.println("--- FIN DU SCENARIO DESEQUILIBRE ---");
+		System.out.println("\n--- FIN DU SCENARIO DESEQUILIBRE ---");
 		System.out.println("Total produits générés : " + pc.getNbDeProduitsProduits());
 		System.out.println("Total produits consommés : " + pc.getNbProduitsConsommes());
 		

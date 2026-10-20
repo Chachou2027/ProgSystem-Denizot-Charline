@@ -5,4 +5,8 @@ le mutex est bloqué par le producteur. Il appelle ensuite placesLibres.acquire(
 Le producteur attend qu'une place se libère mais aucun consommateur ne peut libérer de place tant que le producteur détient le mutex, ce qui provoque un deadlock
 
 2. Cohérence : Les compteurs de production/consommation s’équilibrent-ils ?
-Oui dans le cas où le scénario est équilibré car dans un tel scénario il y a autant de produits produits que de produits consommés donc les 2 compteurs seront égaux à la fin
+Oui dans le cas où le scénario est équilibré car dans un tel scénario il y a autant de produits produits que de produits consommés donc les 2 compteurs seront égaux à la fin.
+
+3. Blocages : Dans quelles conditions le système peut-il se bloquer ?
+- Si on inverse placesLibres.acquire() et mutexBuffer.acquire(), comme vue dans la question 1 cela provoque un Deadlock
+- Si les consommateurs consomment plus que ce que les producteurs produisent. Par exemple s'il y a 20 produits et 21 consomations alors le dernier consommateur attendra indéfinimment que le 21eme produit arrive, ce qui n'arrivera jamais car le 21eme produit ne sera jamais produit.
