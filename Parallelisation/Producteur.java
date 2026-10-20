@@ -10,7 +10,7 @@ class Producteur implements Runnable {
     public void run() {
 		int teteEcriture;
 		try {
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 5; i++) {
 				
 				int produit = 10 + i;
 		

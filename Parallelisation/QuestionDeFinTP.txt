@@ -1,0 +1,8 @@
+1. Ordre des acquire() : Que se passe-t-il si on inverse placesLibres.acquire() et mutexBuffer.acquire() ?
+Si on inverse les deux instructions, cela provoque un deadlock.
+Par exemple un producteur veut insérer un produit. Si le buffer est plein et qu'au lieu de vérifier si il y a une place libre, on prend le mutex avec mutexBuffer.acquire(),
+le mutex est bloqué par le producteur. Il appelle ensuite placesLibres.acquire() et comme le bffer est plein, le producteur attend qu'une place se libère. Pour qu'une place se libère, un consommateur doit faire mutexBuffer.acquire() mais le mutex est déja vérouillé par le producteur donc aucun consommateur ne peut vider le buffer.
+Le producteur attend qu'une place se libère mais aucun consommateur ne peut libérer de place tant que le producteur détient le mutex, ce qui provoque un deadlock
+
+2. Cohérence : Les compteurs de production/consommation s’équilibrent-ils ?
+Oui dans le cas où le scénario est équilibré car dans un tel scénario il y a autant de produits produits que de produits consommés donc les 2 compteurs seront égaux à la fin

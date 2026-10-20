@@ -12,7 +12,7 @@ class Consommateur implements Runnable {
     public void run() {
         
 		try {
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 5; i++) {
             
 				// Attendre qu'un élément soit disponible
 				pc.getElementsDisponibles().acquire();

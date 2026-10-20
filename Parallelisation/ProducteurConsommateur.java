@@ -1,6 +1,7 @@
 import java.util.concurrent.Semaphore;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Arrays;
 
 public class ProducteurConsommateur {
 
@@ -59,6 +60,7 @@ public class ProducteurConsommateur {
 		teteEcriture = (teteEcriture + 1) %  TAILLE_BUFFER;
 		nbDeProduitsProduits++;
 		System.out.println("[PRODUCTION] Produit inséré. Total produits produits : " + nbDeProduitsProduits);
+		System.out.println("\nBuffer :" + Arrays.toString(buffer) + "\n");
 
 	}
 	
@@ -68,6 +70,7 @@ public class ProducteurConsommateur {
 		teteLecture = (teteLecture + 1) % TAILLE_BUFFER;
 		nbProduitsConsommes++;
 		System.out.println("[CONSOMMATION] Produit " + valeurLue + " consommé. Total consommé : " + nbProduitsConsommes);
+		System.out.println("\nBuffer :" + Arrays.toString(buffer) + "\n");
 		return valeurLue;
 	}
 	
