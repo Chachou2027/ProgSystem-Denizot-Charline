@@ -8,7 +8,7 @@
 public class TestCompteur {
     
     /** Le nombre de fois que le test est effectué */
-    public final static int NB_TESTS = 500;
+    public final static int NB_TESTS = 50;
     
     public final static int NB_THREADS = 9;
     
@@ -16,7 +16,7 @@ public class TestCompteur {
     
     public static void main(String[] args) {
 		
-		int valAttendue = NB_THREADS * 2111111;
+		int valAttendue = NB_THREADS * 1111111;
 		double nbReussite = 0;
 		int maxi = 0;
 		int mini = Integer.MAX_VALUE;
@@ -28,7 +28,7 @@ public class TestCompteur {
             CompteurDangereux.resetCompteur();
 			
 			for (int t = 0; t < NB_THREADS; t++) {
-			threads[t] = new Thread(new CompteurDangereux.Incrementeur("" + t, 2111111));
+			threads[t] = new Thread(new CompteurDangereux.Incrementeur("" + t, 1111111));
 		    }
 			
             for (int j = 0; j < NB_THREADS; j++) {
