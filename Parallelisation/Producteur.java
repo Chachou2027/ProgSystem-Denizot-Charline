@@ -1,7 +1,7 @@
 class Producteur implements Runnable {
     
 	ProducteurConsommateur pc;
-    
+	    
     public Producteur(ProducteurConsommateur pc) {
         this.pc = pc;
 
@@ -12,7 +12,7 @@ class Producteur implements Runnable {
 		try {
 			for (int i = 0; i < 10; i++) {
 				
-				int produit = 10;
+				int produit = 10 + i;
 		
 				// Attendre une place libre
 				pc.getPlacesLibres().acquire();
@@ -31,6 +31,7 @@ class Producteur implements Runnable {
 				
 				// Pour respecter l'encapsulation
 				pc.insererProduit(produit);
+				System.out.println("Produit inséré : " + produit);
 				
 				// Libérer l'accès au buffer
 				pc.getMutexBuffer().release();
@@ -43,7 +44,5 @@ class Producteur implements Runnable {
 			System.out.println("Le consommateur a été interrompu.");
 		}
     }
-	
-	
-	
+		
 }

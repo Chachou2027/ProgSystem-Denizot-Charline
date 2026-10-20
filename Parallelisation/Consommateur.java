@@ -12,7 +12,7 @@ class Consommateur implements Runnable {
     public void run() {
         
 		try {
-			for (int i = 0; i < 7; i++) {
+			for (int i = 0; i < 10; i++) {
             
 				// Attendre qu'un élément soit disponible
 				pc.getElementsDisponibles().acquire();
@@ -22,7 +22,7 @@ class Consommateur implements Runnable {
 				
 				// Retirer un élément du buffer
 				Integer produitRetire = pc.retirerProduit();
-				System.out.print("Produit consommé : " + produitRetire);
+				System.out.println("Produit consommé : " + produitRetire);
 				
 				//Libérer l'accès au buffer
 				pc.getMutexBuffer().release();
