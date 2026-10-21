@@ -29,7 +29,7 @@ class Producteur implements Runnable {
 				pc.setTeteEcriture(teteEcriture);
 				*/
 				
-				// Pour respecter l'encapsulation
+				// Pour respecter l'encapsulation synchronised  de pc.insererProduit()?
 				pc.insererProduit(produit);
 				System.out.println("Produit inséré : " + produit);
 				
