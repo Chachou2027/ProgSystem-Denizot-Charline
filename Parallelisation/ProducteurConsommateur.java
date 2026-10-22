@@ -15,7 +15,7 @@ public class ProducteurConsommateur {
     private final Semaphore elementsDisponibles = new Semaphore(0);  
     
     /* Un seul thread peut manipuler le buffer à la fois (mutex classique) */
-    private final Semaphore mutexBuffer = new Semaphore(1); // quel erreur ici ? vous pouvez le résoudre plus tard
+    private final Semaphore mutexBuffer = new Semaphore(1); 
     
 	/* Indice d'écriture pour les consommateurs */
     private int teteLecture = 0;
@@ -55,6 +55,12 @@ public class ProducteurConsommateur {
 	}
 	
 	
+	/**
+	 * Ajoute un produit au buffer et incrémente la tête d'écriture
+	 * de manière circulaire
+	 * Incrémente le compteur de produits produits
+	 * @param produit la valeur du produit à insérer
+	 */
 	public void insererProduit(int produit) {
 		buffer[teteEcriture] = produit;
 		teteEcriture = (teteEcriture + 1) %  TAILLE_BUFFER;
@@ -64,6 +70,12 @@ public class ProducteurConsommateur {
 
 	}
 	
+	/**
+	 * Retire un produit du buffer et incrémente la tête de lecture
+	 * de manière circulaire
+	 * Incrémente le compteur de produits consommés
+	 * @return la valeur consommée
+	 */
 	public Integer retirerProduit() {
 		Integer valeurLue = buffer[teteLecture];
 		buffer[teteLecture] = null;
