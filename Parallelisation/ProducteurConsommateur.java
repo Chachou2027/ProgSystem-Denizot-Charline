@@ -63,6 +63,7 @@ public class ProducteurConsommateur {
 	 */
 	public void insererProduit(int produit) {
 		buffer[teteEcriture] = produit;
+        // Faire un Synchronised Ici car section critique ?
 		teteEcriture = (teteEcriture + 1) %  TAILLE_BUFFER;
 		nbDeProduitsProduits++;
 		System.out.println("[PRODUCTION] Produit inséré. Total produits produits : " + nbDeProduitsProduits);
@@ -79,6 +80,7 @@ public class ProducteurConsommateur {
 	public Integer retirerProduit() {
 		Integer valeurLue = buffer[teteLecture];
 		buffer[teteLecture] = null;
+        // Faire un Synchronised Ici car section critique ?
 		teteLecture = (teteLecture + 1) % TAILLE_BUFFER;
 		nbProduitsConsommes++;
 		System.out.println("[CONSOMMATION] Produit " + valeurLue + " consommé. Total consommé : " + nbProduitsConsommes);
